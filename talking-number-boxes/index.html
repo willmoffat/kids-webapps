@@ -1,0 +1,30 @@
+<!doctype html>
+<title>Kids Numbers</title>
+
+<style>
+ #form {
+     padding:1em;
+     font-size: 18pt;
+ }
+ #form input { font-size:inherit; }
+
+ #container { line-height: 11px; }
+ #container span {
+     display:inline-block;
+     background: pink;
+     width:10px; height:10px;
+     margin-right: 1px;
+ }
+ #container span:nth-child(10n) {
+     background:red;
+ }
+</style>
+
+<div id="form">
+    <label>Type a number:
+        <input id="num" type="number" value="10" min="0" />
+    </label>
+</div>
+
+<section id="container"></section>
+<script src="num.js"></script>
