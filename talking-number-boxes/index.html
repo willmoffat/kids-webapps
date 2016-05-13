@@ -1,12 +1,26 @@
 <!doctype html>
 <title>Kids Numbers</title>
-
+<link href='https://fonts.googleapis.com/css?family=Droid+Sans+Mono&text=1234567890'
+      rel='stylesheet' type='text/css'>
 <style>
- #form {
-     padding:1em;
-     font-size: 18pt;
+
+ input,input:focus {
+     border: none;
+     outline: none;
  }
- #form input { font-size:inherit; }
+
+ #head { text-align: center; }
+
+ input,#formatted {
+     font-family: 'Droid Sans Mono', monospace;
+     text-align:center;
+     width:100%;
+     margin: 0.5em auto;
+ }
+
+ input      { font-size: 200%;}
+ #formatted { font-size: 500%; font-weight:bold; }
+
 
  #container { line-height: 11px; }
  #container span {
@@ -20,11 +34,10 @@
  }
 </style>
 
-<div id="form">
-    <label>Type a number:
-        <input id="num" autofocus />
-    </label>
-    <span id="formatted"></span>
+<div id="head">
+    <h1>Type a number:</h1>
+    <input id="num" autofocus/>
+    <div id="formatted"></div>
 </div>
 
 <section id="container"></section>
