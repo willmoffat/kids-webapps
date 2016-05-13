@@ -45,28 +45,19 @@ function boxes(n) {
     }
   }
 }
+function show() {
+  var value = $num.value;
+  var n = parse(value);
+  var nStr = n.toLocaleString();  // 1978 -> 1,978.
 
-function showNaN() {
-  $formatted.textContent = 'Not a number';
-}
-
-function showNum(n, nStr) {
+  if (isNaN(n)) {
+    n = 0;
+    nStr = '';
+  }
   $formatted.textContent = nStr;
   boxes(n);
   speak(nStr);
 }
-
-function show() {
-  var value = $num.value;
-  var n = parse(value);
-  if (isNaN(n)) {
-    showNaN();
-    return;
-  }
-  var nStr = n.toLocaleString();  // 1978 -> 1,978.
-  showNum(n, nStr);
-}
-
 
 function speak(txt) {
   speechSynthesis.cancel();
