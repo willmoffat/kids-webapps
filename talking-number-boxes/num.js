@@ -7,25 +7,37 @@ function parse(val) {
   return parseInt(val, 10);
 }
 
+function boxes(n) {
+  if (n > 10000) {
+    return 'Too big to show!';
+  }
+  if (n < 1) {
+    return '';
+  }
+  var a = new Array(n + 1);
+  return a.join('<span></span>');
+}
+
+function showNaN() {
+  $formatted.textContent = 'Not a number';
+  $container.innerHTML = '';
+}
+
+function showNum(n, nStr) {
+  $formatted.textContent = nStr;
+  $container.innerHTML = boxes(n);
+  speak(nStr);
+}
 
 function show() {
-  $container.innerHTML = '';
   var value = $num.value;
   var n = parse(value);
   if (isNaN(n)) {
-    $container.textContent = '';
-    $formatted.textContent = 'Not a number';
+    showNaN();
     return;
   }
   var nStr = n.toLocaleString();  // 1978 -> 1,978.
-  $formatted.textContent = nStr;
-  speak(nStr);
-  if (n > 10000) {
-    $container.textContent = 'Too big to show!';
-    return;
-  }
-  var a = new Array(n + 1);
-  $container.innerHTML = a.join('<span></span>');
+  showNum(n, nStr);
 }
 
 
