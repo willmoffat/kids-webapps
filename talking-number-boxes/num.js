@@ -32,7 +32,7 @@ function boxes(n) {
   canvas.style.height = MAXY + 'px';
   canvas.height = MAXY;
   var x = 0, y = 0;
-  for (var i = 0; i < n; i++) {
+  for (var i = 1; i <= n; i++) {
     ctx.fillStyle = (i % 10 === 0) ? "red" : "pink";
     ctx.fillRect(x, y, W, H);
     x += SX;
