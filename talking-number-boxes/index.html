@@ -4,6 +4,7 @@
       rel='stylesheet' type='text/css'>
 <style>
 
+ html,body,canvas { width:100%; height:100%; margin:0; border:0; padding:0; }
  input,input:focus {
      border: none;
      outline: none;
@@ -20,18 +21,13 @@
  input      { font-size: 200%;}
  #formatted { font-size: 500%; font-weight:bold; }
 
-
- #container { line-height: 11px; }
- #container span {
-     display:inline-block;
-     background: pink;
-     width:10px; height:10px;
-     margin-right: 1px;
- }
- #container span:nth-child(10n) {
-     background:red;
+ #draw {
+     width:100%;
+     height:30%;
  }
 </style>
+
+
 
 <div id="head">
     <h1>Type a number:</h1>
@@ -39,5 +35,9 @@
     <div id="formatted"></div>
 </div>
 
-<section id="container"></section>
+<div id="draw">
+    <canvas id="canvas"></canvas>
+</div>
+
+
 <script src="num.js"></script>
