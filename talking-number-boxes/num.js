@@ -75,7 +75,15 @@ function speak(txt) {
   speechSynthesis.speak(msg);
 }
 
+function onKey(e) {
+  if (/^(Digit)|(Arrow)|(Backspace)|(Delete)/.test(e.code)) {
+    return;
+  }
+  console.log('Disallowing ', e.code);
+  e.preventDefault();
+}
 
+window.addEventListener('keydown', onKey);
 window.addEventListener('resize', resize);
 $num.addEventListener('input', show);
 $num.addEventListener('blur', function() { $num.focus(); });
