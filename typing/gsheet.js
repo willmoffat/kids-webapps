@@ -34,7 +34,7 @@ var Google = (function() {
         table[row] = [];
       }
       table[row][col] = val;
-      console.log(row, col, val);
+      // console.log(row, col, val);
     });
     return table;
   }

@@ -10,12 +10,22 @@
 
   var currentSentence;
   var sentences = [];
+  var speechFixes = {};
+
+  function extractFix(match) {
+    var w = match.split('|');
+    console.log(w[0], '-->', w[1]);
+    speechFixes[w[0]] = w[1];
+    return w[0];
+  }
 
   function init(sheet) {
     for (var i = 1; i < sheet.length; i++) {
       var row = sheet[i];
-      var s = {text: row[0], img: row[1]};
-      if (s.text) {
+      var text = row[0];
+      if (text) {
+        text = text.replace(/\S+\|\S+/g, extractFix);
+        var s = {text: text, img: row[1]};
         sentences.push(s);
       }
     }
@@ -44,11 +54,16 @@
   }
 
   function speak(txt) {
+    for (var word in speechFixes) {
+      var fix = speechFixes[word];
+      txt = txt.replace(word, fix);  // TODO(wdm) Enforce word boundaries.
+    }
     speechSynthesis.cancel();
     var msg = new SpeechSynthesisUtterance(txt);
     msg.lang = 'en-GB';  // For some reason, my default voice is German.
     speechSynthesis.speak(msg);
   }
+  window.speak = speak;
 
   function speakLetter(e) {
     var letter = e.data;
@@ -85,12 +100,9 @@
 
     var typo = want.slice(0, got.length) !== got;
     wordInput.className = typo ? 'typo' : '';
-    if (typo) {
-      return;
-    }
 
     if (e.keyCode === 32) {
-      speakLastWord(got);
+      speakLastWord(wordInput.value);  // Don't use uppercase for speech.
       return;
     }
 
@@ -99,7 +111,7 @@
       backgroundEl.style.backgroundImage =
           'url("' + (currentSentence.img || OK_IMG) + '")';
       // Wait for letter to finish speaking.
-      setTimeout(function() { speak(want); }, 500);
+      setTimeout(function() { speak(currentSentence.text); }, 500);
     }
   }
 
