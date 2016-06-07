@@ -22,7 +22,7 @@ body {
 				       
   
 #wordGuide, #wordInput {
-  font-size:1000%;
+  font-size: 6vw;
   font-family: 'Anonymous Pro', sans-serif;
   background: rgba(0,0,0,0.6);
   color:#eee;

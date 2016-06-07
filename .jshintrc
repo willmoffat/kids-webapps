@@ -5,6 +5,7 @@
   "unused" : true,
   "predef" : [
     "JSON",
+    "XMLHttpRequest",
     "document",
     "window",
     "setTimeout",

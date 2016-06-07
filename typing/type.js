@@ -7,28 +7,14 @@
   var OK_IMG = 'smile.svg';
 
   var currentSentence;
+  var sentences;
 
-  var sentences = [
-    {
-      text : 'I like frogs',
-      img :
-          'https://upload.wikimedia.org/wikipedia/commons/5/55/Atelopus_zeteki1.jpg'
-    },
-    {
-
-      text : 'Dinosaurs are cool',
-      img :
-          'https://upload.wikimedia.org/wikipedia/commons/b/b6/Hell_Creek_dinosaurs_and_pterosaurs_by_durbed.jpg'
-    }
-  ];
-
-  function init() {
+  function init(s) {
+    sentences = s;
     initEventListeners();
     // fullScreen(); TODO(wdm)
     changeGuideWord();
   }
-
-   window.addEventListener('load', init);
 
   function randomPick(list) {
     return list[Math.floor(Math.random() * list.length)];
@@ -37,7 +23,7 @@
   function speak(txt) {
     speechSynthesis.cancel();
     var msg = new SpeechSynthesisUtterance(txt);
-    msg.lang = 'en-GB'; // For some reason, my default voice is German.
+    msg.lang = 'en-GB';  // For some reason, my default voice is German.
     speechSynthesis.speak(msg);
   }
 
@@ -80,7 +66,7 @@
   function doChangeBtn() {
     var text = window.prompt("Enter a sentence");
     var img = window.prompt('Image URL to display', OK_IMG);
-    changeGuideWord({text : text, img : img});
+    changeGuideWord({text: text, img: img});
   }
 
   function initEventListeners() {
@@ -116,4 +102,7 @@
     e.preventDefault();
     e.stopPropagation();
   }
+
+  wordInput.value = 'Loading...';
+  window.Google.loadSpreadsheet(init);
 })();
