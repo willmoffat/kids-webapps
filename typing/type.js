@@ -3,14 +3,11 @@ var wordGuide = document.getElementById('wordGuide');
 var wordInput = document.getElementById('wordInput');
 
 function init() {
-  initWordBox();
-  if (!DEBUG) {
-    fullScreen();
-    disableMouse();
-    wordInput.addEventListener('keydown', trapModifierKeys, false);
-  }
+  initEventListeners();
+  // fullScreen(); TODO(wdm)
   changeGuideWord('My name is Yann');
 }
+
 window.addEventListener('load', init);
 
 function speak(txt) {
@@ -42,12 +39,27 @@ function onKey(e) {
   wordInput.className = typo ? 'typo' : '';
 }
 
-function initWordBox() {
+function initEventListeners() {
   wordInput.addEventListener('textInput', speakLetter, false);
   wordInput.addEventListener('keyup', onKey, false);
+  wordInput.addEventListener('keydown', trapModifierKeys, false);
+
+  if (!DEBUG) {
+    return;
+  }
+  // Disable mouse.
+  var elements = Array.prototype.slice.call(document.querySelectorAll('*'));
+  ['contextmenu', 'mousedown', 'mouseup', 'click'].forEach(function(eventName) {
+    elements.forEach(function(el) {
+      el.addEventListener(eventName, trapEvent, true);
+    });
+  });
 }
 
 function trapModifierKeys(e) {
+  if (DEBUG) {
+    return;
+  }
   if (e.metaKey || e.ctrlKey || e.altGraphKey || e.altKey || e.which == 9) {
     console.log('trapping ', e);
     trapEvent(e);
@@ -57,13 +69,4 @@ function trapModifierKeys(e) {
 function trapEvent(e) {
   e.preventDefault();
   e.stopPropagation();
-}
-
-function disableMouse() {
-  var elements = Array.prototype.slice.call(document.querySelectorAll('*'));
-  ['contextmenu', 'mousedown', 'mouseup', 'click'].forEach(function(eventName) {
-    elements.forEach(function(el) {
-      el.addEventListener(eventName, trapEvent, true);
-    });
-  });
 }
