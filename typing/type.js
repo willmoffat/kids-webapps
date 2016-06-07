@@ -33,8 +33,14 @@
     }
   }
 
+  var lastPick;
   function randomPick(list) {
-    return list[Math.floor(Math.random() * list.length)];
+    var pick;
+    do {
+      pick = list[Math.floor(Math.random() * list.length)];
+    } while (pick === lastPick);
+    lastPick = pick;
+    return pick;
   }
 
   function speak(txt) {
