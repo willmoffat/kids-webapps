@@ -1,6 +1,6 @@
 (function(Google) {
   "use strict";
-  var DEBUG = true;
+  var DEBUG = document.location.search === '?debug';
   var SHEET_ID = '1IXOByukXMgx3eI1DpDXEKZZStWXTrK7-KwMU_BFoBzA';
   var wordGuide = document.getElementById('wordGuide');
   var wordInput = document.getElementById('wordInput');
