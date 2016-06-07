@@ -55,6 +55,12 @@
     speak(letter.toUpperCase());
   }
 
+  function speakLastWord(text) {
+    var words = text.split(/\s+/);
+    words.pop();
+    speak(words.pop());
+  }
+
   function changeGuideWord(sentence) {
     if (!sentence || !sentence.text) {
       sentence = randomPick(sentences);
@@ -74,17 +80,27 @@
       return;
     }
 
-    // if (e.keyCode === 32) {} // TODO(wdm) Speak last word.
     var got = wordInput.value.toUpperCase();
     var want = currentSentence.text.toUpperCase();
+
+    var typo = want.slice(0, got.length) !== got;
+    wordInput.className = typo ? 'typo' : '';
+    if (typo) {
+      return;
+    }
+
+    if (e.keyCode === 32) {
+      speakLastWord(got);
+      return;
+    }
+
     if (got === want) {
       // Success!
       backgroundEl.style.backgroundImage =
           'url("' + (currentSentence.img || OK_IMG) + '")';
-      speak(want);
+      // Wait for letter to finish speaking.
+      setTimeout(function() { speak(want); }, 500);
     }
-    var typo = want.slice(0, got.length) !== got;
-    wordInput.className = typo ? 'typo' : '';
   }
 
   function initEventListeners() {
