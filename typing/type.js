@@ -4,13 +4,35 @@
   var wordGuide = document.getElementById('wordGuide');
   var wordInput = document.getElementById('wordInput');
 
+  var OK_IMG = 'smile.svg';
+
+  var currentSentence;
+
+  var sentences = [
+    {
+      text : 'I like frogs',
+      img :
+          'https://upload.wikimedia.org/wikipedia/commons/5/55/Atelopus_zeteki1.jpg'
+    },
+    {
+
+      text : 'Dinosaurs are cool',
+      img :
+          'https://upload.wikimedia.org/wikipedia/commons/b/b6/Hell_Creek_dinosaurs_and_pterosaurs_by_durbed.jpg'
+    }
+  ];
+
   function init() {
     initEventListeners();
     // fullScreen(); TODO(wdm)
-    changeGuideWord('I like frogs');
+    changeGuideWord();
   }
 
-  window.addEventListener('load', init);
+   window.addEventListener('load', init);
+
+  function randomPick(list) {
+    return list[Math.floor(Math.random() * list.length)];
+  }
 
   function speak(txt) {
     speechSynthesis.cancel();
@@ -24,18 +46,31 @@
     speak(letter.toUpperCase());
   }
 
-  function changeGuideWord(toType) {
-    speak(toType);
-    wordGuide.textContent = toType;
+  function changeGuideWord(sentence) {
+    if (!sentence || !sentence.text) {
+      sentence = randomPick(sentences);
+    }
+    currentSentence = sentence;
+    speak(sentence.text);
+    wordGuide.textContent = sentence.text;
+    document.body.style.backgroundImage = '';
     wordInput.value = '';
     wordInput.focus();
   }
 
-  function onKey() {
+  function onKey(e) {
+    if (e.keyCode === 13) {
+      changeGuideWord();
+      return;
+    }
+
+    // if (e.keyCode === 32) {} // TODO(wdm) Speak last word.
     var got = wordInput.value.toUpperCase();
-    var want = wordGuide.textContent.toUpperCase();
+    var want = currentSentence.text.toUpperCase();
     if (got === want) {
       console.log('TODO: success!');
+      document.body.style.backgroundImage =
+          'url("' + currentSentence.img + '")';
       speak(want);
     }
     var typo = want.slice(0, got.length) !== got;
@@ -44,7 +79,8 @@
 
   function doChangeBtn() {
     var text = window.prompt("Enter a sentence");
-    changeGuideWord(text);
+    var img = window.prompt('Image URL to display', OK_IMG);
+    changeGuideWord({text : text, img : img});
   }
 
   function initEventListeners() {

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="-20 -18 60 60">
+  <g>
+    <radialGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" cy="10" cx="10" r="9.5">
+      <stop stop-color="#FFF100" offset=".4872"/>
+      <stop stop-color="#FFBF00" offset="1"/>
+    </radialGradient>
+    <path d="m10.001 19.5c-5.239 0-9.501-4.262-9.501-9.499 0-5.239 4.262-9.501 9.501-9.501 5.237 0 9.499 4.262 9.499 9.501 0 5.237-4.262 9.499-9.499 9.499z" fill="url(#SVGID_1_)"/>
+    <path d="m10 0c5.522 0 10 4.477 10 10 0 5.522-4.478 10-10 10-5.523 0-10-4.478-10-10 0-5.523 4.477-10 10-10m0 1c-4.962 0-9 4.038-9 9 0 4.963 4.038 9 9 9 4.963 0 9-4.037 9-9 0-4.962-4.037-9-9-9z" fill="#E0A31A"/>
+  </g>
+  <g stroke="#B3801E" fill="#fff">
+    <ellipse rx="2" ry="3.5" cy="7.209" cx="6" stroke-width=".8107"/>
+    <ellipse rx="2" ry="3.5" cy="7.209" cx="14" stroke-width=".8106"/>
+  </g>
+  <g>
+    <path d="m5.25 13.59c0.836 1.724 2.642 2.925 4.75 2.925s3.914-1.201 4.75-2.925" stroke="#C73D00" stroke-linecap="round" stroke-width="1.1693" fill="none"/>
+  </g>
+  <g fill="#730000">
+    <ellipse rx="1.25" ry="1.563" cy="8.771" cx="14"/>
+    <ellipse rx="1.25" ry="1.563" cy="8.771" cx="6"/>
+  </g>
+
+</svg>
