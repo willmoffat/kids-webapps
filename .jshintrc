@@ -1,0 +1,15 @@
+{
+  "enforceall" : true,
+  "strict" : true,
+  "undef" : true,
+  "unused" : true,
+  "predef" : [
+    "JSON",
+    "document",
+    "window",
+    "setTimeout",
+    "speechSynthesis",
+    "SpeechSynthesisUtterance",
+    "console"
+  ]
+}

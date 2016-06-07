@@ -1,3 +1,5 @@
+(function() {
+    "use strict";
 var DEBUG = true;
 var wordGuide = document.getElementById('wordGuide');
 var wordInput = document.getElementById('wordInput');
@@ -28,7 +30,7 @@ function changeGuideWord(toType) {
   wordInput.value = '';
 }
 
-function onKey(e) {
+function onKey() {
   var got = wordInput.value.toUpperCase();
   var want = wordGuide.textContent.toUpperCase();
   if (got === want) {
@@ -60,7 +62,7 @@ function trapModifierKeys(e) {
   if (DEBUG) {
     return;
   }
-  if (e.metaKey || e.ctrlKey || e.altGraphKey || e.altKey || e.which == 9) {
+  if (e.metaKey || e.ctrlKey || e.altGraphKey || e.altKey || e.which === 9) {
     console.log('trapping ', e);
     trapEvent(e);
   }
@@ -70,3 +72,4 @@ function trapEvent(e) {
   e.preventDefault();
   e.stopPropagation();
 }
+})();
