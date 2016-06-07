@@ -13,31 +13,37 @@ function init() {
 }
 window.addEventListener('load', init);
 
-function speak(text) {
-  // Correct weird pronunciation.
-  text = text;
-  // chrome.tts.speak(text);
+function speak(txt) {
+  speechSynthesis.cancel();
+  var msg = new SpeechSynthesisUtterance(txt);
+  msg.lang = 'en-GB'; // For some reason, my default voice is German.
+  speechSynthesis.speak(msg);
 }
 
-function newLetter(e) {
+function speakLetter(e) {
   var letter = e.data;
   speak(letter.toUpperCase());
 }
 
 function changeGuideWord(toType) {
+  speak(toType);
   wordGuide.textContent = toType;
   wordInput.value = '';
 }
 
 function onKey(e) {
-  var newText = wordInput.value.toUpperCase();
-  if (newText === wordGuide.textContent.toUpperCase()) {
+  var got = wordInput.value.toUpperCase();
+  var want = wordGuide.textContent.toUpperCase();
+  if (got === want) {
     console.log('TODO: success!');
+    speak(want);
   }
+  var typo = want.slice(0, got.length) !== got;
+  wordInput.className = typo ? 'typo' : '';
 }
 
 function initWordBox() {
-  wordInput.addEventListener('textInput', newLetter, false);
+  wordInput.addEventListener('textInput', speakLetter, false);
   wordInput.addEventListener('keyup', onKey, false);
 }
 

@@ -26,5 +26,7 @@ body {
 
 #wordGuide { color:#999; }
 
+#wordInput.typo { color: red; }
+
 
 /* Can't use *::selection { background: transparent; } for a text input */
