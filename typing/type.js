@@ -7,7 +7,7 @@
   function init() {
     initEventListeners();
     // fullScreen(); TODO(wdm)
-    changeGuideWord('My name is Yann');
+    changeGuideWord('I like frogs');
   }
 
   window.addEventListener('load', init);
@@ -28,6 +28,7 @@
     speak(toType);
     wordGuide.textContent = toType;
     wordInput.value = '';
+    wordInput.focus();
   }
 
   function onKey() {
@@ -41,22 +42,28 @@
     wordInput.className = typo ? 'typo' : '';
   }
 
+  function doChangeBtn() {
+    var text = window.prompt("Enter a sentence");
+    changeGuideWord(text);
+  }
+
   function initEventListeners() {
     wordInput.addEventListener('textInput', speakLetter, false);
     wordInput.addEventListener('keyup', onKey, false);
     wordInput.addEventListener('keydown', trapModifierKeys, false);
 
     if (!DEBUG) {
-      return;
-    }
-    // Disable mouse.
-    var elements = Array.prototype.slice.call(document.querySelectorAll('*'));
-    ['contextmenu', 'mousedown', 'mouseup', 'click'].forEach(function(
-        eventName) {
-      elements.forEach(function(el) {
-        el.addEventListener(eventName, trapEvent, true);
+      // Disable mouse.
+      var elements = Array.prototype.slice.call(document.querySelectorAll('*'));
+      ['contextmenu', 'mousedown', 'mouseup', 'click'].forEach(function(
+          eventName) {
+        elements.forEach(function(el) {
+          el.addEventListener(eventName, trapEvent, true);
+        });
       });
-    });
+    }
+
+    document.getElementById('change').addEventListener('click', doChangeBtn);
   }
 
   function trapModifierKeys(e) {
