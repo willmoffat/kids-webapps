@@ -1,24 +1,25 @@
-this.Google = (function() {
+var Google = (function() {
   "use strict";
-  var Google = {};
 
-  // https://docs.google.com/spreadsheets/d/1IXOByukXMgx3eI1DpDXEKZZStWXTrK7-KwMU_BFoBzA
-  var docId = '1IXOByukXMgx3eI1DpDXEKZZStWXTrK7-KwMU_BFoBzA';
-  Google.loadSpreadsheet = function(callback) {
-    var url = 'https://spreadsheets.google.com/feeds/cells/' + docId +
+  function loadSpreadsheet(sheetId, callback) {
+    var url = 'https://spreadsheets.google.com/feeds/cells/' + sheetId +
               '/od6/public/basic?alt=json';
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
       if (this.readyState !== 4) {
         return;
       }
-      callback(Google.decodeResponse(this));
+      callback(decodeResponse(this));
     };
     xhr.open("GET", url, true);
     xhr.send();
-  };
+  }
 
-  Google.makeTable = function(entry) {
+  function editUrl(sheetId) {
+    return 'https://docs.google.com/spreadsheets/d/' + sheetId;
+  }
+
+  function makeTable(entry) {
     var table = [];
     entry.forEach(function(entry) {
       var val = entry.content.$t;
@@ -36,20 +37,16 @@ this.Google = (function() {
       console.log(row, col, val);
     });
     return table;
-  };
+  }
 
-  // Must be Word, Pronunciation, Image Url
-  // Must be "Published to the web" (not same as "Anybody with the link can
-  // view")
-  Google.decodeResponse = function(xhr) {
+  // Must be "Published to the web" (not "Anybody with the link can view")
+  function decodeResponse(xhr) {
     var response = JSON.parse(xhr.response);
-    var table = Google.makeTable(response.feed.entry);
+    var table = makeTable(response.feed.entry);
+    return table;
+  }
 
-    // Remove header row.
-    table.shift();
+  return {loadSpreadsheet : loadSpreadsheet, editUrl : editUrl};
 
-    return table.map(function(row) { return {text : row[0], img : row[1]}; });
-  };
-
-  return Google;
 })();
+Google = Google;

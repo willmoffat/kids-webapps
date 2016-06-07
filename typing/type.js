@@ -1,16 +1,23 @@
-(function() {
+(function(Google) {
   "use strict";
   var DEBUG = true;
+  var SHEET_ID = '1IXOByukXMgx3eI1DpDXEKZZStWXTrK7-KwMU_BFoBzA';
   var wordGuide = document.getElementById('wordGuide');
   var wordInput = document.getElementById('wordInput');
 
   var OK_IMG = 'smile.svg';
 
   var currentSentence;
-  var sentences;
+  var sentences = [];
 
-  function init(s) {
-    sentences = s;
+  function init(sheet) {
+    for (var i = 1; i < sheet.length; i++) {
+      var row = sheet[i];
+      var s = {text: row[0], img: row[1]};
+      if (s.text) {
+        sentences.push(s);
+      }
+    }
     initEventListeners();
     // fullScreen(); TODO(wdm)
     changeGuideWord();
@@ -54,19 +61,13 @@
     var got = wordInput.value.toUpperCase();
     var want = currentSentence.text.toUpperCase();
     if (got === want) {
-      console.log('TODO: success!');
+      // Success!
       document.body.style.backgroundImage =
-          'url("' + currentSentence.img + '")';
+          'url("' + (currentSentence.img || OK_IMG) + '")';
       speak(want);
     }
     var typo = want.slice(0, got.length) !== got;
     wordInput.className = typo ? 'typo' : '';
-  }
-
-  function doChangeBtn() {
-    var text = window.prompt("Enter a sentence");
-    var img = window.prompt('Image URL to display', OK_IMG);
-    changeGuideWord({text: text, img: img});
   }
 
   function initEventListeners() {
@@ -85,7 +86,12 @@
       });
     }
 
-    document.getElementById('change').addEventListener('click', doChangeBtn);
+    document.getElementById('change').addEventListener('click', openSheet);
+  }
+
+  function openSheet() {
+    var url = Google.editUrl(SHEET_ID);
+    window.open(url, '_blank');
   }
 
   function trapModifierKeys(e) {
@@ -104,5 +110,5 @@
   }
 
   wordInput.value = 'Loading...';
-  window.Google.loadSpreadsheet(init);
-})();
+  Google.loadSpreadsheet(SHEET_ID, init);
+})(window.Google);
