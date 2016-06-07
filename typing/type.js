@@ -4,6 +4,7 @@
   var SHEET_ID = '1IXOByukXMgx3eI1DpDXEKZZStWXTrK7-KwMU_BFoBzA';
   var wordGuide = document.getElementById('wordGuide');
   var wordInput = document.getElementById('wordInput');
+  var backgroundEl = document.getElementById('background');
 
   var OK_IMG = 'smile.svg';
 
@@ -19,8 +20,17 @@
       }
     }
     initEventListeners();
-    // fullScreen(); TODO(wdm)
     changeGuideWord();
+  }
+
+  function fullscreen(el) {
+    if (DEBUG) {
+      return;
+    }
+    var fn = el.requestFullScreen || el.webkitRequestFullscreen;
+    if (fn) {
+      fn.call(el);
+    }
   }
 
   function randomPick(list) {
@@ -46,12 +56,13 @@
     currentSentence = sentence;
     speak(sentence.text);
     wordGuide.textContent = sentence.text;
-    document.body.style.backgroundImage = '';
+    backgroundEl.style.backgroundImage = '';
     wordInput.value = '';
     wordInput.focus();
   }
 
   function onKey(e) {
+    fullscreen(document.body);
     if (e.keyCode === 13) {
       changeGuideWord();
       return;
@@ -62,7 +73,7 @@
     var want = currentSentence.text.toUpperCase();
     if (got === want) {
       // Success!
-      document.body.style.backgroundImage =
+      backgroundEl.style.backgroundImage =
           'url("' + (currentSentence.img || OK_IMG) + '")';
       speak(want);
     }
@@ -105,6 +116,7 @@
   }
 
   function trapEvent(e) {
+    fullscreen(document.body);
     e.preventDefault();
     e.stopPropagation();
   }
