@@ -46,7 +46,7 @@ var Google = (function() {
     return table;
   }
 
-  return {loadSpreadsheet : loadSpreadsheet, editUrl : editUrl};
+  return {loadSpreadsheet: loadSpreadsheet, editUrl: editUrl};
 
 })();
 Google = Google;
