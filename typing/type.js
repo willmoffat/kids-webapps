@@ -25,6 +25,9 @@
       var row = sheet[i];
       var text = row[0];
       if (text) {
+        if (text.indexOf('//') === 0) {
+          continue;  // Skip comments.
+        }
         text = text.replace(/\S+\|\S+/g, extractFix);
         var tags = row[1].split(',');
         if (!TAG || tags.indexOf(TAG) !== -1) {
