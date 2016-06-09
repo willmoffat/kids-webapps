@@ -9,12 +9,13 @@ body { background-color:black; }
   background-size: cover;
 }
 
+.hidden { display: none; }
+
 #change {
     position: fixed;
-    right: 1em; top: 1em;
+    right: 1em; bottom: 1em;
     font-size: 200%;
     background: #999;
-    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
 }
 
 #wordGuide, #wordInput, #wordInput:focus { border:none; outline:none; }

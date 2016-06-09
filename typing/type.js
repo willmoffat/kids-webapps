@@ -130,8 +130,6 @@
         });
       });
     }
-
-    document.getElementById('change').addEventListener('click', openSheet);
   }
 
   function openSheet() {
@@ -155,6 +153,11 @@
     e.stopPropagation();
   }
 
+  if (DEBUG) {
+    var change = document.getElementById('change');
+    change.addEventListener('click', openSheet);
+    change.className = '';
+  }
   wordInput.value = 'Loading...';
   Google.loadSpreadsheet(SHEET_ID, init);
 })(window.Google);
