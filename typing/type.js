@@ -98,8 +98,16 @@
     speak(sentence.text);
     wordGuide.textContent = sentence.text;
     backgroundEl.style.backgroundImage = '';
+    if (DEBUG) {
+      updateBackground(currentSentence);
+    }
     wordInput.value = '';
     wordInput.focus();
+  }
+
+  function updateBackground(sentence) {
+    backgroundEl.style.backgroundImage =
+        'url("' + (sentence.img || OK_IMG) + '")';
   }
 
   function onKey(e) {
@@ -122,8 +130,7 @@
 
     if (got === want) {
       // Success!
-      backgroundEl.style.backgroundImage =
-          'url("' + (currentSentence.img || OK_IMG) + '")';
+      updateBackground(currentSentence);
       // Wait for letter to finish speaking.
       setTimeout(function() { speak(currentSentence.text); }, 500);
     }
