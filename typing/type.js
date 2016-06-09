@@ -1,6 +1,7 @@
 (function(Google) {
   "use strict";
-  var DEBUG = document.location.search === '?debug';
+  var DEBUG = document.location.search.indexOf('debug') !== -1;
+  var TAG = document.location.hash.substr(1);
   var SHEET_ID = '1IXOByukXMgx3eI1DpDXEKZZStWXTrK7-KwMU_BFoBzA';
   var wordGuide = document.getElementById('wordGuide');
   var wordInput = document.getElementById('wordInput');
@@ -25,8 +26,12 @@
       var text = row[0];
       if (text) {
         text = text.replace(/\S+\|\S+/g, extractFix);
-        var s = {text: text, img: row[1]};
-        sentences.push(s);
+        var tags = row[1].split(',');
+        if (!TAG || tags.indexOf(TAG) !== -1) {
+          var s = {text: text, img: row[2]};
+          sentences.push(s);
+          console.log(s);
+        }
       }
     }
     initEventListeners();
@@ -46,9 +51,15 @@
   var lastPick;
   function randomPick(list) {
     var pick;
-    do {
+    for (var i = 0; i < 10; i++) {
       pick = list[Math.floor(Math.random() * list.length)];
-    } while (pick === lastPick);
+      if (pick !== lastPick) {
+        break;
+      }
+    }
+    if (!pick) {
+      throw new Error("No sentences!");
+    }
     lastPick = pick;
     return pick;
   }
