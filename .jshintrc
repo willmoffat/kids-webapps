@@ -3,6 +3,7 @@
   "strict" : true,
   "undef" : true,
   "unused" : true,
+  "forin": false,
   "predef" : [
     "JSON",
     "XMLHttpRequest",

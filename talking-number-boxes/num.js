@@ -56,16 +56,8 @@ function show() {
   }
   $formatted.textContent = nStr;
   boxes(n);
-  speak(nStr);
+  Speech.say(nStr);
 }
-
-function speak(txt) {
-  speechSynthesis.cancel();
-  var msg = new SpeechSynthesisUtterance(txt);
-  msg.lang = 'en-GB';  // For some reason, my default voice is German.
-  speechSynthesis.speak(msg);
-}
-
 function onKey(e) {
   if (/^(Digit)|(Arrow)|(Backspace)|(Delete)/.test(e.code)) {
     return;

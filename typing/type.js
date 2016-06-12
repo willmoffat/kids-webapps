@@ -1,4 +1,4 @@
-(function(Google) {
+(function(Google, Speech) {
   "use strict";
   var DEBUG = document.location.search.indexOf('debug') !== -1;
   var TAG = document.location.hash.substr(1);
@@ -11,22 +11,16 @@
 
   var currentSentence;
   var sentences = [];
-  var speechFixes = {};
-
-  var speechSynthesis = window.speechSynthesis;
-  if (!speechSynthesis) {
-    window.alert('You are using an old browser without speech. ' +
-                 'Consider using Google Chrome');
-  }
-
-  function extractFix(match) {
-    var w = match.split('|');
-    console.log(w[0], '-->', w[1]);
-    speechFixes[w[0]] = w[1];
-    return w[0];
-  }
 
   function init(sheet) {
+    var speechFixes = {};
+    var extractFix = function(match) {
+      var w = match.split('|');
+      console.log(w[0], '-->', w[1]);
+      speechFixes[w[0]] = w[1];
+      return w[0];
+    };
+
     for (var i = 1; i < sheet.length; i++) {
       var row = sheet[i];
       var text = row[0];
@@ -42,6 +36,7 @@
         }
       }
     }
+    Speech.setup(speechFixes);
     initEventListeners();
     changeGuideWord();
   }
@@ -72,25 +67,10 @@
     return pick;
   }
 
-  function speak(txt) {
-    if (!speechSynthesis) {
-      return;
-    }
-    for (var word in speechFixes) {
-      var fix = speechFixes[word];
-      txt = txt.replace(word, fix);  // TODO(wdm) Enforce word boundaries.
-    }
-    speechSynthesis.cancel();
-    var msg = new SpeechSynthesisUtterance(txt);
-    msg.lang = 'en-GB';  // For some reason, my default voice is German.
-    speechSynthesis.speak(msg);
-  }
-  window.speak = speak;
-
   function speakLastWord(text) {
     var words = text.split(/\s+/);
     words.pop();
-    speak(words.pop());
+    Speech.say(words.pop());
   }
 
   function changeGuideWord(sentence) {
@@ -98,7 +78,7 @@
       sentence = randomPick(sentences);
     }
     currentSentence = sentence;
-    speak(sentence.text);
+    Speech.say(sentence.text);
     wordGuide.textContent = sentence.text;
     backgroundEl.style.backgroundImage = '';
     if (DEBUG) {
@@ -116,7 +96,7 @@
   function onKey(e) {
     fullscreen(document.body);
 
-    speak(e.key);
+    Speech.say(e.key);
 
     if (e.keyCode === 13) {
       changeGuideWord();
@@ -138,7 +118,7 @@
       // Success!
       updateBackground(currentSentence);
       // Wait for letter to finish speaking.
-      setTimeout(function() { speak(currentSentence.text); }, 500);
+      setTimeout(function() { Speech.say(currentSentence.text); }, 500);
     }
   }
 
@@ -186,4 +166,4 @@
   }
   wordInput.value = 'Loading...';
   Google.loadSpreadsheet(SHEET_ID, init);
-})(window.Google);
+})(window.Google, window.Speech);
