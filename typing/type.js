@@ -13,6 +13,12 @@
   var sentences = [];
   var speechFixes = {};
 
+  var speechSynthesis = window.speechSynthesis;
+  if (!speechSynthesis) {
+    window.alert('You are using an old browser without speech. ' +
+                 'Consider using Google Chrome');
+  }
+
   function extractFix(match) {
     var w = match.split('|');
     console.log(w[0], '-->', w[1]);
@@ -67,6 +73,9 @@
   }
 
   function speak(txt) {
+    if (!speechSynthesis) {
+      return;
+    }
     for (var word in speechFixes) {
       var fix = speechFixes[word];
       txt = txt.replace(word, fix);  // TODO(wdm) Enforce word boundaries.
