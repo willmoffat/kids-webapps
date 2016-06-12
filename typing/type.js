@@ -10,9 +10,10 @@
   var OK_IMG = 'smile.svg';
 
   var currentSentence;
-  var sentences = [];
+  var sentences;
 
-  function onLoadSheet(sheet) {
+  function parseSheet(sheet) {
+    var sentences = [];
     var speechFixes = {};
     var extractFix = function(match) {
       var w = match.split('|');
@@ -37,8 +38,7 @@
       }
     }
     Speech.setup(speechFixes);
-    initEventListeners();
-    changeGuideWord();
+    return sentences;
   }
 
   function fullscreen(el) {
@@ -159,6 +159,12 @@
     e.stopPropagation();
   }
 
+  function init(s) {
+    sentences = s;
+    initEventListeners();
+    changeGuideWord();
+  }
+
   if (DEBUG) {
     var change = document.getElementById('change');
     change.addEventListener('click', openSheet);
@@ -166,6 +172,8 @@
   }
 
   wordInput.value = 'Loading...';
-  GoogleSheet.load(SHEET_ID, onLoadSheet);
+  GoogleSheet.load(SHEET_ID).then(parseSheet).then(init);
+
+  // init([{text: 'hi'}]);
 
 })(window.GoogleSheet, window.Speech);
