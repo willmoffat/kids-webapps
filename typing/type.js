@@ -3,22 +3,22 @@
   var DEBUG = document.location.search.indexOf('debug') !== -1;
   var TAG = document.location.hash.substr(1);
   var SHEET_ID = '1IXOByukXMgx3eI1DpDXEKZZStWXTrK7-KwMU_BFoBzA';
-  var wordGuide = document.getElementById('wordGuide');
-  var wordInput = document.getElementById('wordInput');
-  var backgroundEl = document.getElementById('background');
-
   var OK_IMG = 'smile.svg';
-
-  var currentSentence;
-  var sentences;
+  var wordInput = document.getElementById('wordInput');
 
   function parseSheet(sheet) {
-    var sentences = [];
-    var speechFixes = {};
+    var game = {
+      currentSentence: null,
+      sentences: [],
+      speechFixes: {},
+      nextSentence: function() {
+        return randomPick(game.sentences, game.currentSentence);
+      }
+    };
+
     var extractFix = function(match) {
       var w = match.split('|');
-      console.log(w[0], '-->', w[1]);
-      speechFixes[w[0]] = w[1];
+      game.speechFixes[w[0]] = w[1];
       return w[0];
     };
 
@@ -33,12 +33,11 @@
         var tags = row[1].split(',');
         if (!TAG || tags.indexOf(TAG) !== -1) {
           var s = {text: text, img: row[2]};
-          sentences.push(s);
+          game.sentences.push(s);
         }
       }
     }
-    Speech.setup(speechFixes);
-    return sentences;
+    return game;
   }
 
   function fullscreen(el) {
@@ -51,8 +50,7 @@
     }
   }
 
-  var lastPick;
-  function randomPick(list) {
+  function randomPick(list, lastPick) {
     var pick;
     for (var i = 0; i < 10; i++) {
       pick = list[Math.floor(Math.random() * list.length)];
@@ -63,7 +61,6 @@
     if (!pick) {
       throw new Error("No sentences!");
     }
-    lastPick = pick;
     return pick;
   }
 
@@ -73,69 +70,65 @@
     Speech.say(words.pop());
   }
 
-  function changeGuideWord(sentence) {
-    if (!sentence || !sentence.text) {
-      sentence = randomPick(sentences);
-    }
-    currentSentence = sentence;
-    Speech.say(sentence.text);
-    wordGuide.textContent = sentence.text;
-    backgroundEl.style.backgroundImage = '';
-    if (DEBUG) {
-      updateBackground(currentSentence);
-    }
+  function doNextSentence(game) {
+    game.currentSentence = game.nextSentence();
+    var wordGuide = document.getElementById('wordGuide');
+    Speech.say(game.currentSentence.text);
+    wordGuide.textContent = game.currentSentence.text;
+    updateBackground(null);
     wordInput.value = '';
     wordInput.focus();
   }
 
   function updateBackground(sentence) {
-    backgroundEl.style.backgroundImage =
-        'url("' + (sentence.img || OK_IMG) + '")';
+    var bg = "";
+    if (sentence) {
+      bg = 'url("' + (sentence.img || OK_IMG) + '")';
+    }
+    document.getElementById('background').style.backgroundImage = bg;
   }
 
-  function onKey(e) {
-    fullscreen(document.body);
+  function makeKeyHandler(game) {
+    return function onKey(e) {
+      fullscreen(document.body);
 
-    Speech.say(e.key);
+      Speech.say(e.key);
 
-    if (e.keyCode === 13) {
-      changeGuideWord();
-      return;
-    }
+      if (e.keyCode === 13) {
+        doNextSentence(game);
+        return;
+      }
 
-    var got = wordInput.value.toUpperCase();
-    var want = currentSentence.text.toUpperCase();
+      var got = wordInput.value.toUpperCase();
+      var want = game.currentSentence.text.toUpperCase();
 
-    var typo = want.slice(0, got.length) !== got;
-    wordInput.className = typo ? 'typo' : '';
+      var typo = want.slice(0, got.length) !== got;
+      wordInput.className = typo ? 'typo' : '';
 
-    if (e.keyCode === 32) {
-      speakLastWord(wordInput.value);  // Don't use uppercase for speech.
-      return;
-    }
+      if (e.keyCode === 32) {
+        speakLastWord(wordInput.value);  // Don't use uppercase for speech.
+        return;
+      }
 
-    if (got === want) {
-      // Success!
-      updateBackground(currentSentence);
-      // Wait for letter to finish speaking.
-      setTimeout(function() { Speech.say(currentSentence.text); }, 500);
-    }
+      if (got === want) {
+        // Success!
+        updateBackground(game.currentSentence);
+        // Wait for letter to finish speaking.
+        setTimeout(function() { Speech.say(game.currentSentence.text); }, 500);
+      }
+    };
   }
 
-  function initEventListeners() {
-    wordInput.addEventListener('keyup', onKey, false);
+  function disableBrowserUI() {
     wordInput.addEventListener('keydown', trapModifierKeys, false);
-
-    if (!DEBUG) {
-      // Disable mouse.
-      var elements = Array.prototype.slice.call(document.querySelectorAll('*'));
-      ['contextmenu', 'mousedown', 'mouseup', 'click'].forEach(function(
-          eventName) {
-        elements.forEach(function(el) {
-          el.addEventListener(eventName, trapEvent, true);
-        });
+    // Disable mouse.
+    var elements = Array.prototype.slice.call(document.querySelectorAll('*'));
+    ['contextmenu', 'mousedown', 'mouseup', 'click'].forEach(function(
+        eventName) {
+      elements.forEach(function(el) {
+        el.addEventListener(eventName, trapEvent, true);
       });
-    }
+    });
   }
 
   function openSheet() {
@@ -159,10 +152,13 @@
     e.stopPropagation();
   }
 
-  function init(s) {
-    sentences = s;
-    initEventListeners();
-    changeGuideWord();
+  function play(game) {
+    Speech.setup(game.speechFixes);
+    wordInput.addEventListener('keyup', makeKeyHandler(game), false);
+    if (!DEBUG) {
+      disableBrowserUI();
+    }
+    doNextSentence(game);
   }
 
   if (DEBUG) {
@@ -172,8 +168,15 @@
   }
 
   wordInput.value = 'Loading...';
-  GoogleSheet.load(SHEET_ID).then(parseSheet).then(init);
+  GoogleSheet.load(SHEET_ID).then(parseSheet).then(play);
 
-  // init([{text: 'hi'}]);
+  if (false) {
+    var testGame = {
+      sentences: [{promt: 'Hello, please type the word below:', text: 'hi'}],
+      speechFixes: {},
+      nextSentence: function() { return testGame.sentences[0]; }
+    };
+    play(testGame);
+  }
 
 })(window.GoogleSheet, window.Speech);
