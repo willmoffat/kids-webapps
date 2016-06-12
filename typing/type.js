@@ -1,4 +1,4 @@
-(function(Google, Speech) {
+(function(GoogleSheet, Speech) {
   "use strict";
   var DEBUG = document.location.search.indexOf('debug') !== -1;
   var TAG = document.location.hash.substr(1);
@@ -12,7 +12,7 @@
   var currentSentence;
   var sentences = [];
 
-  function init(sheet) {
+  function onLoadSheet(sheet) {
     var speechFixes = {};
     var extractFix = function(match) {
       var w = match.split('|');
@@ -139,7 +139,7 @@
   }
 
   function openSheet() {
-    var url = Google.editUrl(SHEET_ID);
+    var url = GoogleSheet.editUrl(SHEET_ID);
     window.open(url, '_blank');
   }
 
@@ -164,6 +164,8 @@
     change.addEventListener('click', openSheet);
     change.className = '';
   }
+
   wordInput.value = 'Loading...';
-  Google.loadSpreadsheet(SHEET_ID, init);
-})(window.Google, window.Speech);
+  GoogleSheet.load(SHEET_ID, onLoadSheet);
+
+})(window.GoogleSheet, window.Speech);
