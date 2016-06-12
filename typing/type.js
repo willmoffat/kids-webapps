@@ -33,7 +33,6 @@
         if (!TAG || tags.indexOf(TAG) !== -1) {
           var s = {text: text, img: row[2]};
           sentences.push(s);
-          console.log(s);
         }
       }
     }
@@ -79,11 +78,6 @@
   }
   window.speak = speak;
 
-  function speakLetter(e) {
-    var letter = e.data;
-    speak(letter.toUpperCase());
-  }
-
   function speakLastWord(text) {
     var words = text.split(/\s+/);
     words.pop();
@@ -112,6 +106,9 @@
 
   function onKey(e) {
     fullscreen(document.body);
+
+    speak(e.key);
+
     if (e.keyCode === 13) {
       changeGuideWord();
       return;
@@ -137,7 +134,6 @@
   }
 
   function initEventListeners() {
-    wordInput.addEventListener('textInput', speakLetter, false);
     wordInput.addEventListener('keyup', onKey, false);
     wordInput.addEventListener('keydown', trapModifierKeys, false);
 
