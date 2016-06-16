@@ -39,5 +39,11 @@ body { background-color:black; }
 
 #wordInput.typo { color: red; }
 
-
 /* Can't use *::selection { background: transparent; } for a text input */
+
+#prompt {
+    color: white;
+    position: fixed;
+    bottom: 4em; left: 3em;
+    font-size: 200%;
+}

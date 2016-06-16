@@ -71,10 +71,12 @@
   }
 
   function doNextSentence(game) {
-    game.currentSentence = game.nextSentence();
-    var wordGuide = document.getElementById('wordGuide');
-    Speech.say(game.currentSentence.text);
-    wordGuide.textContent = game.currentSentence.text;
+    var s = game.nextSentence();
+    game.currentSentence = s;
+    var speech = s.prompt || s.text;
+    document.getElementById('prompt').textContent = s.prompt || '';
+    Speech.say(speech);
+    document.getElementById('wordGuide').textContent = s.text;
     updateBackground(null);
     wordInput.value = '';
     wordInput.focus();
@@ -168,15 +170,24 @@
   }
 
   wordInput.value = 'Loading...';
-  GoogleSheet.load(SHEET_ID).then(parseSheet).then(play);
-
   if (false) {
+    GoogleSheet.load(SHEET_ID).then(parseSheet).then(play);
+  } else {
     var testGame = {
-      sentences: [{promt: 'Hello, please type the word below:', text: 'hi'}],
+      sentences: [
+        {
+          prompt: 'Please type the word below:',  // TODO(wdm) Press Enter!
+          text: 'hi'
+        },
+          {prompt: 'Hello. What is your name?', text: 'Yann'},
+          {prompt: 'Are you hungry?', text: 'I like eating frogs!'}
+      ],
       speechFixes: {},
-      nextSentence: function() { return testGame.sentences[0]; }
+      currentIndex: 0,
+      nextSentence: function() {
+        return testGame.sentences[testGame.currentIndex++];
+      }
     };
     play(testGame);
   }
-
 })(window.GoogleSheet, window.Speech);
