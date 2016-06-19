@@ -100,6 +100,9 @@
     Speech.say(speech);
     document.getElementById('wordGuide').textContent = s.text;
     updateBackground(null);
+    if (s.videoId) {
+      Video.load(s); // TODO(wdm) Only load if progress made?
+    }
     wordInput.value = '';
     wordInput.focus();
   }
@@ -108,7 +111,7 @@
     var bg;
     if (sentence) {
       if (sentence.videoId) {
-        Video.play(sentence);
+        Video.play();
         bg = '';
       } else {
         bg = 'url("' + (sentence.img || OK_IMG) + '")';
