@@ -11,12 +11,20 @@ body { background-color:black; }
 }
 
 
-#video-container,#video-overlay {
+.superzoom {
     position: fixed;
     bottom: -50px; left: -50px;
     top: -50px;    right: -50px;
 }
 #video-overlay { opacity: 0; }
+
+/* DEBUG */
+body.debug #video-overlay {
+    display: none;
+}
+body.debug .superzoom {
+    bottom:0; left:0; top:0; right:0;
+}
 
 .hidden { display: none; }
 

@@ -33,7 +33,12 @@
     }
     var s;
     if (tab === 'videos') {
-      s = {text: text, videoId: row.id, start: row.start, end: row.end};
+      s = {
+        text: text,
+        videoId: row.id,
+        start: parseInt(row.start, 10),
+        end: parseInt(row.end, 10)
+      };
     } else if (tab === 'sentences') {
       s = {text: text, img: row.image};
     } else {
@@ -198,7 +203,12 @@
     var change = document.getElementById('change');
     change.addEventListener('click', openSheet);
     change.className = '';
+    document.body.className = 'debug';
+  } else {
+    document.getElementById('video-overlay')
+        .addEventListener('click', trapEvent);
   }
+
 
   wordInput.value = 'Loading...';
   if (true) {

@@ -2,6 +2,8 @@
 this.Video = (function() {
   "use strict";
 
+  var DEBUG = document.location.search.indexOf('debug') !== -1;
+
   // Note(wdm) Extract YT play-list info.
   //           -> Can only get name. No start & stop times.
 
@@ -60,10 +62,16 @@ this.Video = (function() {
         modestbranding: 1,    // Minimal YT logo.
         rel: 0                // Don't show related videos.
       };
-
+      if (DEBUG) {
+        playerVars.controls = 1;
+        console.log('playerVars', playerVars);
+      }
       var container = document.getElementById('video-container');
       var w = container.clientWidth;
       var h = container.clientHeight + 100;
+      if (DEBUG) {
+        h -= 200;
+      }
       player = new YT.Player('video-player', {
         height: h,
         width: w,
@@ -80,14 +88,6 @@ this.Video = (function() {
 
   // For thumbnail URLs see:
   // https://www.binarymoon.co.uk/2014/03/using-youtube-thumbnails/
-
-  function stopEvent(e) {
-    console.log(e);
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
-  document.getElementById('video-overlay').addEventListener('click', stopEvent);
 
   return {
     hide: hide,
