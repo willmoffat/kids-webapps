@@ -28,6 +28,9 @@
       return;  // Skip blank lines and comments.
     }
     var text = row.sentence.replace(/\S+\|\S+/g, extractFix.bind(null, game));
+    if (tab === 'videos') {
+      row.tags += ',video';  // All videos have a video tag.
+    }
     if (!showByTag(row.tags)) {
       return;
     }
