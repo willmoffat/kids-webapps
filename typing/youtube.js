@@ -27,7 +27,7 @@ this.Video = (function() {
 
   function play() {
     document.getElementById('video-player').className = '';
-    player.playVideo();
+    player.loadingP.then(function() { player.playVideo(); });
   }
 
   var monitorT;
@@ -41,9 +41,11 @@ this.Video = (function() {
 
   function onStateChange(e) {
     if (e.data === YT.PlayerState.PLAYING) {
-      if (!player.finishedLoading) {
+      if (player.loadingResolve) {
         player.pauseVideo();  // Stop when buffering finished.
-        player.finishedLoading = true;
+        var resolve = player.loadingResolve;
+        delete player.loadingResolve;
+        resolve();
       } else {
         monitor();  // Invoked by play(). Start the end monitor.
       }
@@ -52,7 +54,7 @@ this.Video = (function() {
 
   function load(video) {
     if (player && player.video === video) {
-      return;  // Only pre-load once.
+      return player.loadingP;  // Only pre-load once.
     }
 
     hide();
@@ -88,6 +90,9 @@ this.Video = (function() {
       }
     });
     player.video = video;
+    player.loadingP =
+        new Promise(function(resolve) { player.loadingResolve = resolve; });
+    return player.loadingP;
   }
 
   // For thumbnail URLs see:
