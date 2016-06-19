@@ -100,7 +100,7 @@
   }
 
   function updateBackground(sentence) {
-    var bg = "";
+    var bg;
     if (sentence) {
       if (sentence.videoId) {
         Video.play(sentence);
@@ -108,6 +108,9 @@
       } else {
         bg = 'url("' + (sentence.img || OK_IMG) + '")';
       }
+    } else {
+      bg = "";
+      Video.hide();
     }
     document.getElementById('background').style.backgroundImage = bg;
   }

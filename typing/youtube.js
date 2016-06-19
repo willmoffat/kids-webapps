@@ -18,11 +18,15 @@ this.Video = (function() {
     };
   });
 
+  function hide() {
+    if (player && player.getIframe()) {
+      player.destroy();
+    }
+  }
+
   function playVideo(video) {
     return new Promise(function(resolve, reject) {
-      if (player) {
-        player.destroy();
-      }
+      hide();
 
       var monitor = function() {
         if (player.getCurrentTime() > video.end) {
@@ -86,6 +90,7 @@ this.Video = (function() {
   document.getElementById('video-overlay').addEventListener('click', stopEvent);
 
   return {
+    hide: hide,
     play: function(video) {
       return loadYouTubeAPI.then(function() { return playVideo(video); });
     }
