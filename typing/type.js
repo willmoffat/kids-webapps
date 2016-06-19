@@ -6,6 +6,17 @@
   var OK_IMG = 'smile.svg';
   var wordInput = document.getElementById('wordInput');
 
+  function showByTag(rawTags) {
+    if (!TAG) {
+      return true;
+    }  // No tag in hash. Show all.
+    var tags = rawTags.split(/\s*,\s*/);
+    if (tags.indexOf(TAG) !== -1) {
+      return true;
+    }
+    return false;  // Doesn't match #tag
+  }
+
   function parseSheet(sheet) {
     var game = {
       currentSentence: null,
@@ -30,8 +41,8 @@
           continue;  // Skip comments.
         }
         text = text.replace(/\S+\|\S+/g, extractFix);
-        var tags = row.tags.split(',');
-        if (!TAG || tags.indexOf(TAG) !== -1) {
+
+        if (showByTag(row.tags)) {
           var s = {text: text, img: row.image};
           game.sentences.push(s);
         }
@@ -46,8 +57,7 @@
           continue;  // Skip comments.
         }
         text = text.replace(/\S+\|\S+/g, extractFix);
-        tags = row.tags.split(',');
-        if (!TAG || tags.indexOf(TAG) !== -1) {
+        if (showByTag(row.tags)) {
           s = {text: text, videoId: row.id, start: row.start, end: row.end};
           game.sentences.push(s);
         }
