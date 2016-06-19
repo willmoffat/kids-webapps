@@ -17,12 +17,14 @@ this.Video = (function() {
 
   function hide() {
     clearTimeout(monitorT);
+    document.getElementById('video-player').className = 'hidden';
     if (player && player.getIframe()) {
       player.destroy();
     }
   }
 
   function play() {
+    document.getElementById('video-player').className = '';
     player.playVideo();
   }
 
