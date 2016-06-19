@@ -17,6 +17,31 @@
     return false;  // Doesn't match #tag
   }
 
+  function extractFix(game, match) {
+    var w = match.split('|');
+    game.speechFixes[w[0]] = w[1];
+    return w[0];
+  }
+
+  function parseRow(game, tab, row) {
+    if (!row.sentence || row.sentence.indexOf('//') === 0) {
+      return;  // Skip blank lines and comments.
+    }
+    var text = row.sentence.replace(/\S+\|\S+/g, extractFix.bind(null, game));
+    if (!showByTag(row.tags)) {
+      return;
+    }
+    var s;
+    if (tab === 'videos') {
+      s = {text: text, videoId: row.id, start: row.start, end: row.end};
+    } else if (tab === 'sentences') {
+      s = {text: text, img: row.image};
+    } else {
+      throw new Error("unknown tab " + tab);
+    }
+    game.sentences.push(s);
+  }
+
   function parseSheet(sheet) {
     var game = {
       currentSentence: null,
@@ -27,42 +52,8 @@
       }
     };
 
-    var extractFix = function(match) {
-      var w = match.split('|');
-      game.speechFixes[w[0]] = w[1];
-      return w[0];
-    };
-
-    for (var i = 0; i < sheet.sentences.elements.length; i++) {
-      var row = sheet.sentences.elements[i];
-      var text = row.sentence;
-      if (text) {
-        if (text.indexOf('//') === 0) {
-          continue;  // Skip comments.
-        }
-        text = text.replace(/\S+\|\S+/g, extractFix);
-
-        if (showByTag(row.tags)) {
-          var s = {text: text, img: row.image};
-          game.sentences.push(s);
-        }
-      }
-    }
-    // TODO(wdm) DRI.
-    for (i = 0; i < sheet.videos.elements.length; i++) {
-      row = sheet.videos.elements[i];
-      text = row.sentence;
-      if (text) {
-        if (text.indexOf('//') === 0) {
-          continue;  // Skip comments.
-        }
-        text = text.replace(/\S+\|\S+/g, extractFix);
-        if (showByTag(row.tags)) {
-          s = {text: text, videoId: row.id, start: row.start, end: row.end};
-          game.sentences.push(s);
-        }
-      }
-    }
+    sheet.sentences.elements.forEach(parseRow.bind(null, game, 'sentences'));
+    sheet.videos.elements.forEach(parseRow.bind(null, game, 'videos'));
     return game;
   }
 
