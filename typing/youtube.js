@@ -17,7 +17,9 @@ this.Video = (function() {
 
   function hide() {
     clearTimeout(monitorT);
-    document.getElementById('video-player').className = 'hidden';
+    if (!DEBUG) {
+      document.getElementById('video-player').className = 'hidden';
+    }
     if (player && player.getIframe()) {
       player.destroy();
     }
@@ -49,6 +51,10 @@ this.Video = (function() {
   }
 
   function load(video) {
+    if (player && player.video === video) {
+      return;  // Only pre-load once.
+    }
+
     hide();
 
     // https://developers.google.com/youtube/player_parameters

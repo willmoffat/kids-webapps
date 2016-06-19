@@ -100,9 +100,6 @@
     Speech.say(speech);
     document.getElementById('wordGuide').textContent = s.text;
     updateBackground(null);
-    if (s.videoId) {
-      Video.load(s); // TODO(wdm) Only load if progress made?
-    }
     wordInput.value = '';
     wordInput.focus();
   }
@@ -123,6 +120,16 @@
     document.getElementById('background').style.backgroundImage = bg;
   }
 
+  function progress(got, want) {
+    for (var i = 0; i < got.length; i++) {
+      if (got[i] !== want[i]) {
+        return {typo: true, typoPos: i, progress: i / want.length};
+      }
+    }
+    // TODO(wdm) Handle got that is too long?
+    return {progress: got.length / want.length};
+  }
+
   function makeKeyHandler(game) {
     return function onKey(e) {
       fullscreen(document.body);
@@ -136,16 +143,22 @@
 
       var got = wordInput.value.toUpperCase();
       var want = game.currentSentence.text.toUpperCase();
-
-      var typo = want.slice(0, got.length) !== got;
-      wordInput.className = typo ? 'typo' : '';
+      var p = progress(got, want);
+      console.log(got, want, p);
+      if (p.progress > 0.5) {
+        if (game.currentSentence.videoId) {
+          // We're making process. Pre-load the video.
+          Video.load(game.currentSentence);
+        }
+      }
+      wordInput.className = p.typo ? 'typo' : '';
 
       if (e.keyCode === 32) {
         speakLastWord(wordInput.value);  // Don't use uppercase for speech.
         return;
       }
 
-      if (got === want) {
+      if (p.progress === 1) {
         // Success!
         updateBackground(game.currentSentence);
         // Wait for letter to finish speaking.
