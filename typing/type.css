@@ -2,12 +2,21 @@ html,body,#background { height: 100%; width: 100%; }
 html,body,input,pre { margin:0; padding:0 }
 
 body { background-color:black; }
+
 #background {
   position: absolute; left:0; top:0;
   overflow: hidden;
   background: no-repeat center center fixed;
   background-size: contain;
 }
+
+
+#video-container,#video-overlay {
+    position: fixed;
+    bottom: -50px; left: -50px;
+    top: -50px;    right: -50px;
+}
+#video-overlay { opacity: 0; }
 
 .hidden { display: none; }
 

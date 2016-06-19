@@ -22,9 +22,9 @@
       return w[0];
     };
 
-    for (var i = 1; i < sheet.sentences.elements.length; i++) {
+    for (var i = 0; i < sheet.sentences.elements.length; i++) {
       var row = sheet.sentences.elements[i];
-        var text = row.sentence;
+      var text = row.sentence;
       if (text) {
         if (text.indexOf('//') === 0) {
           continue;  // Skip comments.
@@ -33,6 +33,22 @@
         var tags = row.tags.split(',');
         if (!TAG || tags.indexOf(TAG) !== -1) {
           var s = {text: text, img: row.image};
+          game.sentences.push(s);
+        }
+      }
+    }
+    // TODO(wdm) DRI.
+    for (i = 0; i < sheet.videos.elements.length; i++) {
+      row = sheet.videos.elements[i];
+      text = row.sentence;
+      if (text) {
+        if (text.indexOf('//') === 0) {
+          continue;  // Skip comments.
+        }
+        text = text.replace(/\S+\|\S+/g, extractFix);
+        tags = row.tags.split(',');
+        if (!TAG || tags.indexOf(TAG) !== -1) {
+          s = {text: text, videoId: row.id, start: row.start, end: row.end};
           game.sentences.push(s);
         }
       }
@@ -85,7 +101,12 @@
   function updateBackground(sentence) {
     var bg = "";
     if (sentence) {
-      bg = 'url("' + (sentence.img || OK_IMG) + '")';
+      if (sentence.videoId) {
+        Video.play(sentence);
+        bg = '';
+      } else {
+        bg = 'url("' + (sentence.img || OK_IMG) + '")';
+      }
     }
     document.getElementById('background').style.backgroundImage = bg;
   }
@@ -134,7 +155,7 @@
   }
 
   function openSheet() {
-    var url = GoogleSheet.editUrl(SHEET_ID);
+    var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID;
     window.open(url, '_blank');
   }
 
@@ -177,7 +198,7 @@
 
   wordInput.value = 'Loading...';
   if (true) {
-      loadSheet(SHEET_ID).then(parseSheet).then(play);
+    loadSheet(SHEET_ID).then(parseSheet).then(play);
   } else {
     var testGame = {
       sentences: [
