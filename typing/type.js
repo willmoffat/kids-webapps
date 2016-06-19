@@ -1,4 +1,4 @@
-(function(GoogleSheet, Speech) {
+(function(Tabletop, Speech, Video) {
   "use strict";
   var DEBUG = document.location.search.indexOf('debug') !== -1;
   var TAG = document.location.hash.substr(1);
@@ -22,17 +22,17 @@
       return w[0];
     };
 
-    for (var i = 1; i < sheet.length; i++) {
-      var row = sheet[i];
-      var text = row[0];
+    for (var i = 1; i < sheet.sentences.elements.length; i++) {
+      var row = sheet.sentences.elements[i];
+        var text = row.sentence;
       if (text) {
         if (text.indexOf('//') === 0) {
           continue;  // Skip comments.
         }
         text = text.replace(/\S+\|\S+/g, extractFix);
-        var tags = row[1].split(',');
+        var tags = row.tags.split(',');
         if (!TAG || tags.indexOf(TAG) !== -1) {
-          var s = {text: text, img: row[2]};
+          var s = {text: text, img: row.image};
           game.sentences.push(s);
         }
       }
@@ -154,6 +154,12 @@
     e.stopPropagation();
   }
 
+  function loadSheet(id) {
+    return new Promise(function(resolve) {
+      Tabletop.init({key: id, callback: resolve});
+    });
+  }
+
   function play(game) {
     Speech.setup(game.speechFixes);
     wordInput.addEventListener('keyup', makeKeyHandler(game), false);
@@ -170,8 +176,8 @@
   }
 
   wordInput.value = 'Loading...';
-  if (false) {
-    GoogleSheet.load(SHEET_ID).then(parseSheet).then(play);
+  if (true) {
+      loadSheet(SHEET_ID).then(parseSheet).then(play);
   } else {
     var testGame = {
       sentences: [
@@ -179,8 +185,8 @@
           prompt: 'Please type the word below:',  // TODO(wdm) Press Enter!
           text: 'hi'
         },
-          {prompt: 'Hello. What is your name?', text: 'Yann'},
-          {prompt: 'Are you hungry?', text: 'I like eating frogs!'}
+        {prompt: 'Hello. What is your name?', text: 'Yann'},
+        {prompt: 'Are you hungry?', text: 'I like eating frogs!'}
       ],
       speechFixes: {},
       currentIndex: 0,
@@ -190,4 +196,4 @@
     };
     play(testGame);
   }
-})(window.GoogleSheet, window.Speech);
+})(window.Tabletop, window.Speech, window.Video);
