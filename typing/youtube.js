@@ -27,7 +27,10 @@ this.Video = (function() {
 
   function play() {
     document.getElementById('video-player').className = '';
-    player.loadingP.then(function() { player.playVideo(); });
+    player.loadingP.then(function() {
+      player.seekTo(player.video.start);
+      player.playVideo();
+    });
   }
 
   var monitorT;

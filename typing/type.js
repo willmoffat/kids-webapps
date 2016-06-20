@@ -147,7 +147,7 @@
       var got = wordInput.value.toUpperCase();
       var want = game.currentSentence.text.toUpperCase();
       var p = progress(got, want);
-      console.log(got, want, p);
+
       if (p.progress > 0.5) {
         if (game.currentSentence.videoId) {
           // We're making process. Pre-load the video.
